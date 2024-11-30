@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="es">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>Administrador de Tarjetas de Crédito</title>
+		<link
+			rel="stylesheet"
+			href="{{ url_for('static', filename='styles.css') }}"
+		/>
+	</head>
+	<body>
+		<h1>Administrador de Tarjetas de Crédito</h1>
+
+		<h2>Tarjetas de Crédito</h2>
+		<ul>
+			{% for card in cards %}
+			<li>
+				<strong>Alias:</strong> {{ card.alias }}<br>
+				<strong>Límite de Crédito:</strong> {{ card.credit_limit }}<br>
+				<strong>Deuda Total:</strong> {{ card.balance }}<br>
+				<strong>Pago Mensual:</strong> {{ card.calculate_monthly_payment() }}<br>
+				<strong>Crédito Disponible:</strong> {{ card.credit_limit - card.balance }}<br>
+			</li>
+			{% endfor %}
+		</ul>
+
+		<h2>Agregar Tarjeta de Crédito</h2>
+		<form action="/add_card" method="post">
+			<label for="alias">Alias:</label>
+			<input type="text" id="alias" name="alias" required />
+			<label for="credit_limit">Límite de Crédito:</label>
+			<input type="number" id="credit_limit" name="credit_limit" required />
+			<button type="submit">Agregar Tarjeta</button>
+		</form>
+
+		<h2>Agregar Compra a Tarjeta</h2>
+		<form action="/add_purchase" method="post">
+			<label for="purchase_alias">Alias de la Tarjeta:</label>
+			<input type="text" id="purchase_alias" name="alias" list="card-list" required />
+			<datalist id="card-list">
+				{% for card in cards %}
+					<option value="{{ card.alias }}">{{ card.alias }}</option>
+				{% endfor %}
+			</datalist>
+			<label for="amount">Monto de la Compra:</label>
+			<input type="number" id="amount" name="amount" required />
+			<label for="months">Meses:</label>
+			<select id="months" name="months" required>
+				<option value="1">1</option>
+				<option value="3">3</option>
+				<option value="6">6</option>
+				<option value="9">9</option>
+				<option value="12">12</option>
+				<option value="15">15</option>
+				<option value="18">18</option>
+			</select>
+			<button type="submit">Agregar Compra</button>
+		</form>
+
+		<h2>Pagar Deuda de Tarjeta</h2>
+		<form action="/pay_debt" method="post">
+			<label for="debt_alias">Alias de la Tarjeta:</label>
+			<input type="text" id="debt_alias" name="alias" list="card-list-debt" required />
+			<datalist id="card-list-debt">
+				{% for card in cards %}
+					<option value="{{ card.alias }}">{{ card.alias }}</option>
+				{% endfor %}
+			</datalist>
+			<label for="debt_amount">Monto a Pagar:</label>
+			<input type="number" id="debt_amount" name="amount" required />
+			<button type="submit">Pagar Deuda</button>
+		</form>
+
+		<!-- Aquí puedes agregar formularios para otras funcionalidades -->
+	</body>
+</html>
